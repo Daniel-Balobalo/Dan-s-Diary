@@ -7,7 +7,7 @@ class DiaryUI:
         self.db = db
         self.selected_entry_id = None
 
-        master.title("Diary Application")
+        master.title("Dan's Diary")
         master.geometry("600x400")
 
         # Entry List
