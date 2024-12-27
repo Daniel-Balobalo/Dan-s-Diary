@@ -2,7 +2,6 @@ import contextlib
 import tkinter as tk
 from tkinter import messagebox, scrolledtext, simpledialog
 from tkinter.ttk import Style, Button, Entry
-
 from diary_database import is_valid_date
 
 class DiaryUI:
@@ -13,7 +12,15 @@ class DiaryUI:
 
         master.title("Dan's Diary")
         master.geometry("700x500")
-        master.configure(bg="#2e975d")  # Updated light green background
+
+        # Create a canvas for the gradient background
+        self.canvas = tk.Canvas(master, width=700, height=500)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+        self.draw_gradient(self.canvas, "#90ee90", "#ffef78", "#63c9b4")
+
+        # Create a frame to hold the UI elements
+        self.frame = tk.Frame(self.canvas, bg="#2e975d")
+        self.frame.place(relwidth=1, relheight=1)
 
         # Style
         self.style = Style()
@@ -22,12 +29,12 @@ class DiaryUI:
         self.style.configure("TEntry", font=("Arial", 12))
 
         # Entry List
-        self.entry_list = tk.Listbox(master, width=30, height=25, bg="white")
+        self.entry_list = tk.Listbox(self.frame, width=30, height=25, bg="white")
         self.entry_list.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
         self.entry_list.bind("<<ListboxSelect>>", self.load_entry)
 
         # Entry Details
-        self.details_frame = tk.Frame(master, bg="#2e975d")
+        self.details_frame = tk.Frame(self.frame, bg="#2e975d")
         self.details_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         tk.Label(self.details_frame, text="Date (YYYY-MM-DD):", bg="#2e975d").pack()
@@ -43,7 +50,7 @@ class DiaryUI:
         self.content_text.pack(fill=tk.BOTH, expand=True)
 
         # Buttons
-        self.button_frame = tk.Frame(master, bg="#2e975d")
+        self.button_frame = tk.Frame(self.frame, bg="#2e975d")
         self.button_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
 
         Button(self.button_frame, text="Add Entry", command=self.add_entry).pack(side=tk.LEFT, padx=5)
@@ -52,10 +59,38 @@ class DiaryUI:
         Button(self.button_frame, text="Clear", command=self.clear_form).pack(side=tk.LEFT, padx=5)
         Button(self.button_frame, text="Search", command=self.search_entries).pack(side=tk.LEFT, padx=5)
 
-        self.status_label = tk.Label(master, text="Welcome to Dan's Diary!", relief=tk.SUNKEN, bg="#2e975d")
+        self.status_label = tk.Label(self.frame, text="Welcome to Dan's Diary!", relief=tk.SUNKEN, bg="#2e975d")
         self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
 
         self.load_entries()
+
+    def draw_gradient(self, canvas, color1, color2, color3):
+        width = 700
+        height = 500
+        limit = height // 2
+        for i in range(limit):
+            r1, g1, b1 = self.hex_to_rgb(color1)
+            r2, g2, b2 = self.hex_to_rgb(color2)
+            r3, g3, b3 = self.hex_to_rgb(color3)
+            r = int(r1 + (r2 - r1) * i / limit)
+            g = int(g1 + (g2 - g1) * i / limit)
+            b = int(b1 + (b2 - b1) * i / limit)
+            color = self.rgb_to_hex(r, g, b)
+            canvas.create_rectangle(0, i, width, i + 1, outline=color, fill=color)
+            r = int(r2 + (r3 - r2) * i / limit)
+            g = int(g2 + (g3 - g2) * i / limit)
+            b = int(b2 + (b3 - b2) * i / limit)
+            color = self.rgb_to_hex(r, g, b)
+            canvas.create_rectangle(0, limit + i, width, limit + i + 1, outline=color, fill=color)
+
+    def hex_to_rgb(self, hex):
+        hex = hex.lstrip('#')
+        return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+
+    def rgb_to_hex(self, r, g, b):
+        return f'#{r:02x}{g:02x}{b:02x}'
+
+    # ... rest of the code ...
         
     def load_entries(self):
         self.entry_list.delete(0, tk.END)
@@ -110,32 +145,26 @@ class DiaryUI:
         if self.selected_entry_id is None:
             messagebox.showwarning("Error", "No entry selected.")
             return
-        if confirm := messagebox.askyesno(
-            "Confirm", "Are you sure you want to delete this entry?"
-        ):
-            self.db.delete_entry(self.selected_entry_id)
-            self._extracted_from_delete_entry_10("Entry deleted successfully!")
-
-    # TODO Rename this here and in `add_entry`, `update_entry` and `delete_entry`
-    def _extracted_from_delete_entry_10(self, arg0):
-        self.load_entries()
+        self.db.delete_entry(self.selected_entry_id)
         self.clear_form()
-        self.update_status(arg0)
+        self.load_entries()
+        self.update_status("Entry deleted successfully!")
 
     def clear_form(self):
         self.selected_entry_id = None
         self.date_entry.delete(0, tk.END)
         self.title_entry.delete(0, tk.END)
         self.content_text.delete("1.0", tk.END)
+        self.update_status("Form cleared.")
 
     def search_entries(self):
-        if search_term := simpledialog.askstring(
-            "Search", "Enter title to search:"
-        ):
-            results = [entry for entry in self.db.get_entries() if search_term.lower() in entry[2].lower()]
+        search_term = simpledialog.askstring("Search Entries", "Enter search term:")
+        if search_term:
             self.entry_list.delete(0, tk.END)
-            for entry in results:
+            entries = self.db.search_entries(search_term)
+            for entry in entries:
                 self.entry_list.insert(tk.END, f"{entry[1]} - {entry[2]}")
+            self.update_status(f"Found {len(entries)} entries matching '{search_term}'.")
 
     def update_status(self, message):
         self.status_label.config(text=message)
