@@ -1,7 +1,7 @@
 import contextlib
 import tkinter as tk
 from tkinter import messagebox, scrolledtext, simpledialog
-from tkinter.ttk import Style, Button, Frame, Label, Entry
+from tkinter.ttk import Style, Button, Entry
 
 from diary_database import is_valid_date
 
@@ -13,36 +13,37 @@ class DiaryUI:
 
         master.title("Dan's Diary")
         master.geometry("700x500")
+        master.configure(bg="#ccffcc")  # Light green background
 
         # Style
         self.style = Style()
         self.style.configure("TButton", font=("Arial", 12))
-        self.style.configure("TLabel", font=("Arial", 12))
+        self.style.configure("TLabel", font=("Arial", 12), background="#ccffcc")
         self.style.configure("TEntry", font=("Arial", 12))
 
         # Entry List
-        self.entry_list = tk.Listbox(master, width=30, height=25)
+        self.entry_list = tk.Listbox(master, width=30, height=25, bg="#ccffcc")
         self.entry_list.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
         self.entry_list.bind("<<ListboxSelect>>", self.load_entry)
 
         # Entry Details
-        self.details_frame = Frame(master)
+        self.details_frame = tk.Frame(master, bg="#ccffcc")
         self.details_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        Label(self.details_frame, text="Date (YYYY-MM-DD):").pack()
+        tk.Label(self.details_frame, text="Date (YYYY-MM-DD):", bg="#ccffcc").pack()
         self.date_entry = Entry(self.details_frame)
         self.date_entry.pack(fill=tk.X)
 
-        Label(self.details_frame, text="Title:").pack()
+        tk.Label(self.details_frame, text="Title:", bg="#ccffcc").pack()
         self.title_entry = Entry(self.details_frame)
         self.title_entry.pack(fill=tk.X)
 
-        Label(self.details_frame, text="Content:").pack()
-        self.content_text = scrolledtext.ScrolledText(self.details_frame, wrap=tk.WORD, height=10)
+        tk.Label(self.details_frame, text="Content:", bg="#ccffcc").pack()
+        self.content_text = scrolledtext.ScrolledText(self.details_frame, wrap=tk.WORD, height=10, bg="#ccffcc")
         self.content_text.pack(fill=tk.BOTH, expand=True)
 
         # Buttons
-        self.button_frame = Frame(master)
+        self.button_frame = tk.Frame(master, bg="#ccffcc")
         self.button_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
 
         Button(self.button_frame, text="Add Entry", command=self.add_entry).pack(side=tk.LEFT, padx=5)
@@ -51,11 +52,11 @@ class DiaryUI:
         Button(self.button_frame, text="Clear", command=self.clear_form).pack(side=tk.LEFT, padx=5)
         Button(self.button_frame, text="Search", command=self.search_entries).pack(side=tk.LEFT, padx=5)
 
-        self.status_label = Label(master, text="Welcome to Dan's Diary!", relief=tk.SUNKEN)
+        self.status_label = tk.Label(master, text="Welcome to Dan's Diary!", relief=tk.SUNKEN, bg="#ccffcc")
         self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
 
         self.load_entries()
-
+        
     def load_entries(self):
         self.entry_list.delete(0, tk.END)
         entries = self.db.get_entries()
