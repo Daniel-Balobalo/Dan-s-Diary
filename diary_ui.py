@@ -22,7 +22,7 @@ class DiaryUI:
         self.style.configure("TEntry", font=("Arial", 12))
 
         # Entry List
-        self.entry_list = tk.Listbox(master, width=30, height=25, bg="#ccffcc")
+        self.entry_list = tk.Listbox(master, width=30, height=25, bg="white")
         self.entry_list.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
         self.entry_list.bind("<<ListboxSelect>>", self.load_entry)
 
@@ -39,7 +39,7 @@ class DiaryUI:
         self.title_entry.pack(fill=tk.X)
 
         tk.Label(self.details_frame, text="Content:", bg="#ccffcc").pack()
-        self.content_text = scrolledtext.ScrolledText(self.details_frame, wrap=tk.WORD, height=10, bg="#ccffcc")
+        self.content_text = scrolledtext.ScrolledText(self.details_frame, wrap=tk.WORD, height=10, bg="white")
         self.content_text.pack(fill=tk.BOTH, expand=True)
 
         # Buttons
