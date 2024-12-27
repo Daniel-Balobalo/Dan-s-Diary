@@ -13,12 +13,12 @@ class DiaryUI:
 
         master.title("Dan's Diary")
         master.geometry("700x500")
-        master.configure(bg="#ccffcc")  # Light green background
+        master.configure(bg="#2e975d")  # Updated light green background
 
         # Style
         self.style = Style()
         self.style.configure("TButton", font=("Arial", 12))
-        self.style.configure("TLabel", font=("Arial", 12), background="#ccffcc")
+        self.style.configure("TLabel", font=("Arial", 12), background="#2e975d")
         self.style.configure("TEntry", font=("Arial", 12))
 
         # Entry List
@@ -27,23 +27,23 @@ class DiaryUI:
         self.entry_list.bind("<<ListboxSelect>>", self.load_entry)
 
         # Entry Details
-        self.details_frame = tk.Frame(master, bg="#ccffcc")
+        self.details_frame = tk.Frame(master, bg="#2e975d")
         self.details_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        tk.Label(self.details_frame, text="Date (YYYY-MM-DD):", bg="#ccffcc").pack()
+        tk.Label(self.details_frame, text="Date (YYYY-MM-DD):", bg="#2e975d").pack()
         self.date_entry = Entry(self.details_frame)
         self.date_entry.pack(fill=tk.X)
 
-        tk.Label(self.details_frame, text="Title:", bg="#ccffcc").pack()
+        tk.Label(self.details_frame, text="Title:", bg="#2e975d").pack()
         self.title_entry = Entry(self.details_frame)
         self.title_entry.pack(fill=tk.X)
 
-        tk.Label(self.details_frame, text="Content:", bg="#ccffcc").pack()
+        tk.Label(self.details_frame, text="Content:", bg="#2e975d").pack()
         self.content_text = scrolledtext.ScrolledText(self.details_frame, wrap=tk.WORD, height=10, bg="white")
         self.content_text.pack(fill=tk.BOTH, expand=True)
 
         # Buttons
-        self.button_frame = tk.Frame(master, bg="#ccffcc")
+        self.button_frame = tk.Frame(master, bg="#2e975d")
         self.button_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
 
         Button(self.button_frame, text="Add Entry", command=self.add_entry).pack(side=tk.LEFT, padx=5)
@@ -52,7 +52,7 @@ class DiaryUI:
         Button(self.button_frame, text="Clear", command=self.clear_form).pack(side=tk.LEFT, padx=5)
         Button(self.button_frame, text="Search", command=self.search_entries).pack(side=tk.LEFT, padx=5)
 
-        self.status_label = tk.Label(master, text="Welcome to Dan's Diary!", relief=tk.SUNKEN, bg="#ccffcc")
+        self.status_label = tk.Label(master, text="Welcome to Dan's Diary!", relief=tk.SUNKEN, bg="#2e975d")
         self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
 
         self.load_entries()
