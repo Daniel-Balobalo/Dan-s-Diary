@@ -12,45 +12,37 @@ class DiaryUI:
 
         master.title("Dan's Diary")
         master.geometry("700x500")
-
-        # Create a canvas for the gradient background
-        self.canvas = tk.Canvas(master, width=700, height=500)
-        self.canvas.pack(fill=tk.BOTH, expand=True)
-        self.draw_gradient(self.canvas, "#90ee90", "#ffef78", "#63c9b4")
-
-        # Create a frame to hold the UI elements
-        self.frame = tk.Frame(self.canvas, bg="#2e975d")
-        self.frame.place(relwidth=1, relheight=1)
+        master.configure(bg="#90ee90")  # Updated light green background
 
         # Style
         self.style = Style()
         self.style.configure("TButton", font=("Arial", 12))
-        self.style.configure("TLabel", font=("Arial", 12), background="#2e975d")
+        self.style.configure("TLabel", font=("Arial", 12), background="#90ee90")
         self.style.configure("TEntry", font=("Arial", 12))
 
         # Entry List
-        self.entry_list = tk.Listbox(self.frame, width=30, height=25, bg="white")
+        self.entry_list = tk.Listbox(master, width=30, height=25, bg="white")
         self.entry_list.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
         self.entry_list.bind("<<ListboxSelect>>", self.load_entry)
 
         # Entry Details
-        self.details_frame = tk.Frame(self.frame, bg="#2e975d")
+        self.details_frame = tk.Frame(master, bg="#90ee90")
         self.details_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        tk.Label(self.details_frame, text="Date (YYYY-MM-DD):", bg="#2e975d").pack()
+        tk.Label(self.details_frame, text="Date (YYYY-MM-DD):", bg="#90ee90").pack()
         self.date_entry = Entry(self.details_frame)
         self.date_entry.pack(fill=tk.X)
 
-        tk.Label(self.details_frame, text="Title:", bg="#2e975d").pack()
+        tk.Label(self.details_frame, text="Title:", bg="#90ee90").pack()
         self.title_entry = Entry(self.details_frame)
         self.title_entry.pack(fill=tk.X)
 
-        tk.Label(self.details_frame, text="Content:", bg="#2e975d").pack()
+        tk.Label(self.details_frame, text="Content:", bg="#90ee90").pack()
         self.content_text = scrolledtext.ScrolledText(self.details_frame, wrap=tk.WORD, height=10, bg="white")
         self.content_text.pack(fill=tk.BOTH, expand=True)
 
         # Buttons
-        self.button_frame = tk.Frame(self.frame, bg="#2e975d")
+        self.button_frame = tk.Frame(master, bg="#90ee90")
         self.button_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
 
         Button(self.button_frame, text="Add Entry", command=self.add_entry).pack(side=tk.LEFT, padx=5)
@@ -59,7 +51,7 @@ class DiaryUI:
         Button(self.button_frame, text="Clear", command=self.clear_form).pack(side=tk.LEFT, padx=5)
         Button(self.button_frame, text="Search", command=self.search_entries).pack(side=tk.LEFT, padx=5)
 
-        self.status_label = tk.Label(self.frame, text="Welcome to Dan's Diary!", relief=tk.SUNKEN, bg="#2e975d")
+        self.status_label = tk.Label(master, text="Welcome to Dan's Diary!", relief=tk.SUNKEN, bg="#90ee90")
         self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
 
         self.load_entries()
@@ -121,7 +113,7 @@ class DiaryUI:
             return
         if date and title and content:
             self.db.add_entry(date, title, content)
-            self._extracted_from_delete_entry_10("Entry added successfully!")
+            self.update_status("Entry added successfully!")
         else:
             self.update_status("All fields are required.")
 
@@ -137,7 +129,7 @@ class DiaryUI:
             return
         if date and title and content:
             self.db.update_entry(self.selected_entry_id, date, title, content)
-            self._extracted_from_delete_entry_10("Entry updated successfully!")
+            self.update_status("Entry updated successfully!")
         else:
             self.update_status("All fields are required.")
 
